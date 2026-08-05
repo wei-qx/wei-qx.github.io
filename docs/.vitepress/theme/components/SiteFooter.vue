@@ -23,14 +23,6 @@ import T from './T.vue'
             <li><a href="/#about"><T zh="关于" en="About" /></a></li>
           </ul>
         </div>
-        <div>
-          <h4><T zh="其它" en="Elsewhere" /></h4>
-          <ul>
-            <li><a :href="site.links.github" target="_blank" rel="noopener">GitHub</a></li>
-            <li><a :href="site.links.rss"><T zh="RSS 源" en="RSS feed" /></a></li>
-            <li><a :href="site.links.email"><T zh="邮件" en="Email" /></a></li>
-          </ul>
-        </div>
       </div>
       <div class="footer__bottom">
         <span>

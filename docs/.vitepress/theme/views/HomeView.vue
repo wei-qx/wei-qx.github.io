@@ -174,11 +174,6 @@ onMounted(() => {
           <p v-for="(line, i) in lang === 'zh' ? site.about.body.zh : site.about.body.en" :key="i">
             {{ line }}
           </p>
-          <div class="about__links">
-            <a class="btn" :href="site.links.github" target="_blank" rel="noopener">GitHub</a>
-            <a class="btn" :href="site.links.rss"><T zh="RSS 源" en="RSS feed" /></a>
-            <a class="btn" :href="site.links.email"><T zh="邮件" en="Email" /></a>
-          </div>
         </div>
         <div class="about__card">
           <div class="lab"><T zh="写作原则" en="How I write" /></div>
