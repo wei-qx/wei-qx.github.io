@@ -23,7 +23,9 @@ onMounted(() => initLang())
     <PlaygroundView v-else-if="frontmatter.layout === 'playground'" />
     <template v-else>
       <ArticleHeader v-if="frontmatter.title" />
-      <Content />
+      <div class="article-body">
+        <Content />
+      </div>
     </template>
   </main>
   <SiteFooter />

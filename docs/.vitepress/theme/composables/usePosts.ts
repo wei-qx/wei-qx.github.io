@@ -31,7 +31,7 @@ function toPost(mod: { __pageData: PageDataLike }): Post {
   return {
     url: toUrl(mod.__pageData.relativePath),
     title: fm.title ?? mod.__pageData.relativePath,
-    date: fm.date ?? '',
+    date: fm.date ? new Date(fm.date).toISOString().slice(0, 10) : '',
     category: fm.category ?? 'craft',
     excerpt: fm.excerpt ?? '',
     tags: Array.isArray(fm.tags) ? fm.tags : [],
