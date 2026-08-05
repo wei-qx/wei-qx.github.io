@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f3faf4" />
+  <title>devlog — 写下来，免得忘记 · Things I write down</title>
+  <meta name="description" content="一名工程师的个人记录：工程笔记、阅读摘抄与日常思考。A personal record of engineering, reading and everyday thinking." />
+  <meta name="author" content="Your Name" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="devlog — 写下来，免得忘记" />
+  <meta property="og:description" content="一名工程师的个人记录：工程笔记、阅读摘抄与日常思考。" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f3faf4'/%3E%3Crect x='7' y='7' width='18' height='18' rx='5' fill='%231f8f46'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══ Design tokens：Urdu Modern (Indus Script System) — tokens.css 原样绑定 ═══ */
+    :root {
+      --bg: #f3faf4;
+      --surface: #ffffff;
+      --surface-warm: #e5f5e7;
+      --fg: #15261a;
+      --fg-2: #38513e;
+      --muted: #6b7d70;
+      --meta: #1f8f46;
+      --border: #d4e3d7;
+      --border-soft: #edf3ee;
+      --accent: #1f8f46;
+      --accent-on: #ffffff;
+      --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+      --accent-active: color-mix(in oklab, var(--accent), black 14%);
+      --success: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --font-display: Georgia, "Times New Roman", serif;
+      --font-body: Inter, system-ui, sans-serif;
+      --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-lg: 18px;
+      --text-xl: 24px;
+      --text-2xl: 36px;
+      --text-3xl: 54px;
+      --text-4xl: 76px;
+      --leading-body: 1.52;
+      --leading-tight: 1.06;
+      --tracking-display: -0.025em;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --section-y-desktop: 96px;
+      --section-y-tablet: 68px;
+      --section-y-phone: 48px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+      --elev-flat: none;
+      --elev-ring: 0 0 0 1px var(--border);
+      --elev-raised: 0 20px 48px rgba(21, 38, 26, 0.10);
+      --focus-ring: 0 0 0 4px rgba(31, 143, 70, 0.24);
+      --motion-fast: 150ms;
+      --motion-base: 240ms;
+      --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+      --container-max: 1180px;
+      --container-gutter-desktop: 36px;
+      --container-gutter-tablet: 24px;
+      --container-gutter-phone: 16px;
+
+      /* 非品牌布局助手（不覆盖任何品牌 token） */
+      --gutter: var(--container-gutter-desktop);
+      --section-y: var(--section-y-desktop);
+      --ease-soft: cubic-bezier(0.23, 1, 0.32, 1);
+      --tracking-caps: 0.08em;
+    }
+    @media (max-width: 900px) { :root { --section-y: var(--section-y-tablet); --gutter: var(--container-gutter-tablet); } }
+    @media (max-width: 600px) { :root { --section-y: var(--section-y-phone); --gutter: var(--container-gutter-phone); } }
+
+    /* ═══ Reset ═══ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg-2);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-body);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; }
+    img, svg { display: block; }
+    ::selection { background: rgba(31, 143, 70, 0.22); color: var(--fg); }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-family: var(--font-display);
+      color: var(--fg);
+      font-weight: 700;
+      line-height: 1.14;
+      letter-spacing: var(--tracking-display);
+    }
+
+    /* ═══ Layout helpers ═══ */
+    .container { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--gutter); width: 100%; }
+    .section { padding-block: var(--section-y); }
+    .eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--text-xs); font-weight: 600; letter-spacing: var(--tracking-caps);
+      text-transform: uppercase; color: var(--meta);
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .eyebrow::before { content: ""; width: 20px; height: 1px; background: var(--border); }
+    .mono { font-family: var(--font-mono); font-size: 13px; color: var(--muted); letter-spacing: 0; }
+
+    /* ═══ Buttons ═══ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.01em;
+      padding: 10px 18px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--surface); color: var(--fg);
+      cursor: pointer; text-decoration: none;
+      transition: background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard),
+                  color var(--motion-base) var(--ease-standard), transform var(--motion-fast) var(--ease-standard),
+                  box-shadow var(--motion-base) var(--ease-standard);
+    }
+    .btn:hover { background: var(--surface-warm); border-color: var(--accent); color: var(--fg); }
+    .btn:active { transform: translateY(1px); }
+    .btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-on); box-shadow: 0 8px 20px rgba(31,143,70,0.22); }
+    .btn--primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-on); }
+    .btn:focus-visible, a:focus-visible, button:focus-visible, .topic:focus-visible {
+      outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm);
+    }
+    .btn .arrow { transition: transform var(--motion-base) var(--ease-standard); }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    /* ═══ 阅读进度条 ═══ */
+    .progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; background: transparent; }
+    .progress__bar { height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--accent); transition: transform 80ms linear; }
+
+    /* ═══ Nav ═══ */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(243, 250, 244, 0.72);
+      border-bottom: 1px solid transparent;
+      transition: background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
+    }
+    .nav.scrolled {
+      background: rgba(243, 250, 244, 0.9);
+      border-bottom-color: var(--border-soft);
+      backdrop-filter: saturate(140%) blur(12px);
+      -webkit-backdrop-filter: saturate(140%) blur(12px);
+    }
+    .nav__inner { display: flex; align-items: center; gap: var(--space-6); height: 64px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; color: var(--fg); letter-spacing: -0.02em; font-size: 19px; }
+    .brand .mark { width: 22px; height: 22px; border-radius: 6px; background: var(--accent); display: inline-block; flex: none; }
+    .brand .ver { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-weight: 400; }
+    .nav__links { display: flex; gap: 26px; margin-left: 10px; }
+    .nav__links a { font-size: var(--text-sm); font-weight: 500; color: var(--fg-2); transition: color var(--motion-base) var(--ease-standard); }
+    .nav__links a:hover { color: var(--fg); }
+    .nav__spacer { flex: 1; }
+    .nav__actions { display: flex; align-items: center; gap: 8px; }
+    .search-trigger {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+      padding: 8px 12px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--surface);
+      cursor: pointer; transition: color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
+    }
+    .search-trigger:hover { color: var(--fg); border-color: var(--accent); }
+    .search-trigger kbd { font-family: var(--font-mono); font-size: 11px; color: var(--muted); padding: 2px 5px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); }
+    .lang-toggle {
+      width: 38px; height: 38px; display: inline-grid; place-items: center;
+      border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface);
+      cursor: pointer; color: var(--fg-2); font-size: 12px; font-weight: 700; letter-spacing: 0.02em;
+      transition: color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard);
+    }
+    .lang-toggle:hover { color: var(--accent); border-color: var(--accent); background: var(--surface-warm); }
+
+    /* ═══ Hero ═══ */
+    .hero { position: relative; }
+    .hero::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 360px; z-index: -1; pointer-events: none; background: radial-gradient(110% 80% at 18% -10%, var(--surface-warm), transparent 60%); }
+    .hero__eyebrow { margin-bottom: var(--space-6); }
+    .hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 700; line-height: 1.08; max-width: 18ch; }
+    .hero__sub { margin-top: var(--space-6); max-width: 56ch; font-size: clamp(1.02rem, 1.5vw, 1.18rem); color: var(--fg-2); line-height: 1.62; }
+    .hero__meta { margin-top: var(--space-8); display: flex; flex-wrap: wrap; align-items: center; gap: 14px; color: var(--muted); font-size: var(--text-sm); }
+    .hero__meta .sep { color: var(--border); }
+    .hero__meta a { color: var(--fg-2); font-weight: 500; transition: color var(--motion-base) var(--ease-standard); }
+    .hero__meta a:hover { color: var(--accent); }
+
+    /* ═══ Featured ═══ */
+    .feature {
+      display: grid; grid-template-columns: auto 1fr; gap: var(--space-8);
+      padding: var(--space-12); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface); box-shadow: var(--elev-raised);
+      transition: box-shadow var(--motion-base) var(--ease-standard), transform var(--motion-base) var(--ease-standard);
+    }
+    .feature:hover { transform: translateY(-2px); box-shadow: 0 26px 56px rgba(21, 38, 26, 0.14); }
+    .feature__index { font-family: var(--font-mono); font-size: 15px; color: var(--meta); padding-top: 4px; }
+    .feature__meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--muted); font-size: 13px; margin-bottom: var(--space-4); }
+    .feature__meta .cat { color: var(--meta); font-weight: 600; }
+    .feature h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+    .feature__excerpt { margin-top: var(--space-4); color: var(--fg-2); max-width: 68ch; font-size: 1.02rem; }
+    .feature__cta { margin-top: var(--space-6); }
+    @media (max-width: 600px) { .feature { grid-template-columns: 1fr; padding: var(--space-8); } }
+
+    /* ═══ Section header ═══ */
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-8); }
+    .sec-head h2 { font-size: clamp(1.4rem, 2.4vw, 1.75rem); }
+    .sec-head .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+
+    /* ═══ Topics ═══ */
+    .topics { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--space-8); }
+    .topic {
+      font-size: 13px; font-weight: 600; letter-spacing: 0.01em;
+      padding: 8px 15px; border-radius: var(--radius-pill);
+      border: 1px solid var(--border); background: var(--surface); color: var(--fg-2);
+      cursor: pointer; transition: color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard);
+    }
+    .topic:hover { color: var(--accent); border-color: var(--accent); }
+    .topic.is-active { background: var(--accent); color: var(--accent-on); border-color: var(--accent); }
+
+    /* ═══ Archive 网格 ═══ */
+    .archive { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border-soft); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); overflow: hidden; }
+    .card { background: var(--surface); padding: var(--space-8); display: flex; flex-direction: column; transition: background var(--motion-base) var(--ease-standard); position: relative; }
+    .card:hover { background: var(--surface-warm); }
+    .card.flash { animation: flash 1.1s var(--ease-soft); }
+    @keyframes flash { 0% { background: rgba(31,143,70,0.16); } 100% { background: var(--surface); } }
+    .card__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .card__meta { color: var(--muted); font-size: 13px; }
+    .card__meta .cat { color: var(--meta); font-weight: 600; }
+    .card__idx { font-family: var(--font-mono); font-size: 12px; color: var(--meta); }
+    .card h3 { font-size: 1.22rem; line-height: 1.2; transition: color var(--motion-base) var(--ease-standard); }
+    .card:hover h3 { color: var(--accent); }
+    .card__excerpt { margin-top: 10px; color: var(--fg-2); font-size: 0.95rem; flex: 1; }
+    .card__tags { margin-top: var(--space-5); display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { font-size: 12px; font-weight: 500; color: var(--muted); padding: 3px 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--bg); }
+    @media (max-width: 720px) { .archive { grid-template-columns: 1fr; } }
+
+    /* ═══ Dino game ═══ */
+    .game {
+      border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface);
+      box-shadow: var(--elev-raised); padding: var(--space-8); overflow: hidden;
+    }
+    .game__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-6); }
+    .game__head h2 { font-size: clamp(1.4rem, 2.4vw, 1.75rem); }
+    .game__best { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+    .game__best b { color: var(--meta); font-weight: 700; }
+    .game__stage { position: relative; border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: var(--surface); overflow: hidden; }
+    .game__stage canvas { width: 100%; height: auto; display: block; }
+    .game__overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; cursor: pointer; background: linear-gradient(180deg, rgba(243,250,244,0.2), rgba(243,250,244,0.55)); }
+    .game__state-title { font-family: var(--font-display); font-size: clamp(1.3rem, 2.4vw, 1.7rem); color: var(--fg); letter-spacing: -0.02em; }
+    .game__state-sub { font-size: var(--text-sm); color: var(--fg-2); }
+    .game__state-sub b { font-family: var(--font-mono); color: var(--meta); font-weight: 700; }
+    .game__hint { margin-top: var(--space-4); display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: 13px; align-items: center; }
+    .game__hint kbd { font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border: 1px solid var(--border); border-radius: 5px; background: var(--bg); color: var(--fg-2); }
+
+    /* ═══ About ═══ */
+    .about { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: var(--space-12); align-items: start; }
+    .about__body p { color: var(--fg-2); font-size: 1.05rem; margin: 0 0 var(--space-4); max-width: 56ch; }
+    .about__links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: var(--space-6); }
+    .about__card { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface-warm); padding: var(--space-8); }
+    .about__card .lab { font-family: var(--font-body); font-size: var(--text-xs); font-weight: 700; letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--meta); margin-bottom: var(--space-3); }
+    .about__card p { margin: 0; color: var(--fg-2); }
+    @media (max-width: 800px) { .about { grid-template-columns: 1fr; } }
+
+    /* ═══ Footer ═══ */
+    .footer { border-top: 1px solid var(--border-soft); padding-block: var(--space-12) var(--space-8); color: var(--muted); }
+    .footer__grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: var(--space-8); }
+    .footer__brand .brand { margin-bottom: var(--space-4); }
+    .footer__brand p { max-width: 36ch; font-size: var(--text-sm); }
+    .footer h4 { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--meta); margin-bottom: var(--space-4); }
+    .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .footer ul a { font-size: var(--text-sm); color: var(--fg-2); transition: color var(--motion-base) var(--ease-standard); }
+    .footer ul a:hover { color: var(--accent); }
+    .footer__bottom { margin-top: var(--space-12); padding-top: var(--space-6); border-top: 1px solid var(--border-soft); display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+    @media (max-width: 720px) { .footer__grid { grid-template-columns: 1fr 1fr; } .footer__brand { grid-column: 1 / -1; } }
+
+    /* ═══ 搜索面板 ═══ */
+    .palette { position: fixed; inset: 0; z-index: 200; display: none; }
+    .palette.is-open { display: block; }
+    .palette__backdrop { position: absolute; inset: 0; background: rgba(21, 38, 26, 0.34); backdrop-filter: blur(4px); animation: fade var(--motion-base) var(--ease-standard); }
+    .palette__panel { position: relative; max-width: 600px; margin: 12vh auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 30px 70px rgba(21,38,26,0.22); animation: pop var(--motion-base) var(--ease-soft); }
+    .palette__input-row { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--border-soft); }
+    .palette__input-row svg { color: var(--muted); flex: none; }
+    .palette__input-row input { flex: 1; border: none; background: transparent; color: var(--fg); font: inherit; font-size: var(--text-base); }
+    .palette__input-row input:focus { outline: none; }
+    .palette__list { list-style: none; margin: 0; padding: 8px; max-height: 50vh; overflow-y: auto; }
+    .palette__list .res button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 12px; border: none; background: transparent; border-radius: var(--radius-sm); cursor: pointer; text-align: left; }
+    .palette__list .res button:hover, .palette__list .res.active button { background: var(--surface-warm); }
+    .palette__list .res-title { color: var(--fg); font-size: var(--text-sm); font-weight: 600; font-family: var(--font-display); }
+    .palette__list .res-meta { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .palette__list .empty { padding: 28px 14px; text-align: center; color: var(--muted); font-size: var(--text-sm); }
+    .palette__hint { padding: 10px 18px; border-top: 1px solid var(--border-soft); display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
+    .palette__hint kbd { font-family: var(--font-mono); padding: 1px 5px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); }
+
+    /* ═══ 滚动渐显 ═══ */
+    [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity var(--motion-slow, 700ms) var(--ease-soft), transform 700ms var(--ease-soft); }
+    [data-reveal].is-visible { opacity: 1; transform: none; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pop { from { opacity: 0; transform: translateY(-8px) scale(0.99); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 860px) { .nav__links { display: none; } .search-trigger span { display: none; } }
+    @media (max-width: 520px) { .search-trigger kbd { display: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+  <!-- ─── Nav ─── -->
+  <header class="nav" id="nav" data-od-id="site-nav">
+    <div class="container nav__inner">
+      <a class="brand" href="#top" data-od-id="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <span>devlog</span>
+        <span class="ver">v0</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#latest" data-zh="最新" data-en="Latest">Latest</a>
+        <a href="#archive" data-zh="往期" data-en="Archive">Archive</a>
+        <a href="#play" data-zh="摸鱼" data-en="Play">Play</a>
+        <a href="#about" data-zh="关于" data-en="About">About</a>
+      </nav>
+      <div class="nav__spacer"></div>
+      <div class="nav__actions">
+        <button class="search-trigger" id="searchTrigger" data-od-id="search-trigger" aria-label="Search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+          <span data-zh="搜索" data-en="Search">Search</span>
+          <kbd>⌘K</kbd>
+        </button>
+        <button class="lang-toggle" id="langToggle" data-od-id="lang-toggle" aria-label="Switch language / 切换语言">
+          <span data-zh="EN" data-en="中">中</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ─── Hero ─── -->
+    <section class="hero section" data-od-id="masthead">
+      <div class="container">
+        <div class="hero__eyebrow eyebrow" data-reveal>
+          <span data-zh="随写随记" data-en="Field notes">Field notes</span>
+          <span class="mono" data-zh="№ 01 — 个人记录" data-en="№ 01 — a personal log">№ 01 — a personal log</span>
+        </div>
+        <h1 data-reveal style="transition-delay:60ms"
+            data-zh="写下来，免得忘记。"
+            data-en="Things I write down so I won't forget.">
+          Things I write down so I won't forget.
+        </h1>
+        <p class="hero__sub" data-reveal style="transition-delay:120ms"
+           data-zh="关于工程、阅读与日常思考的个人记录。不求完整，只记下值得回头看的东西。"
+           data-en="A personal record of engineering, reading, and everyday thinking — not finished pieces, just things worth coming back to.">
+          A personal record of engineering, reading, and everyday thinking — not finished pieces, just things worth coming back to.
+        </p>
+        <div class="hero__meta" data-reveal style="transition-delay:180ms">
+          <span data-zh="作者" data-en="by">by</span>
+          <span data-zh="你的名字" data-en="Your Name">Your Name</span>
+          <span class="sep">·</span>
+          <time datetime="2026-08-05">2026-08-05</time>
+          <span class="sep">·</span>
+          <a href="#about" data-zh="关于这本记录" data-en="About this notebook">About this notebook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Featured / 最新 ─── -->
+    <section class="section" id="latest" data-od-id="latest">
+      <div class="container">
+        <div class="sec-head" data-reveal>
+          <h2 data-zh="最近写下" data-en="Latest">Latest</h2>
+          <span class="count" data-zh="想到就记" data-en="Written as it comes">Written as it comes</span>
+        </div>
+        <article class="feature" id="post-01" data-article data-category="systems"
+                 data-title-en="Designing systems that age well"
+                 data-title-zh="设计能随时间从容演进的系统"
+                 data-meta="2026-08-05 · 12 min · Systems" data-reveal>
+          <div class="feature__index">01</div>
+          <div>
+            <div class="feature__meta">
+              <time datetime="2026-08-05">2026-08-05</time>
+              <span class="sep" style="color:var(--border)">·</span>
+              <span data-zh="12 分钟阅读" data-en="12 min read">12 min read</span>
+              <span class="sep" style="color:var(--border)">·</span>
+              <span class="cat" data-zh="系统" data-en="Systems">Systems</span>
+            </div>
+            <h2 data-zh="设计能随时间从容演进的系统" data-en="Designing systems that age well">Designing systems that age well</h2>
+            <p class="feature__excerpt" data-zh="大多数系统不是突然崩塌的，而是被慢慢侵蚀。这是一份关于边界、可逆性，以及那些让代码库对未来的维护者保持友善的安静决策的笔记。"
+               data-en="Most systems don't fail suddenly — they erode. Notes on boundaries, reversibility, and the quiet decisions that keep a codebase kind to its future maintainers.">
+              Most systems don't fail suddenly — they erode. Notes on boundaries, reversibility, and the quiet decisions that keep a codebase kind to its future maintainers.
+            </p>
+            <div class="feature__cta">
+              <a class="btn" href="#post-01">
+                <span data-zh="继续阅读" data-en="Read on">Read on</span>
+                <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─── Archive / 往期 ─── -->
+    <section class="section" id="archive" data-od-id="archive">
+      <div class="container">
+        <div class="sec-head" data-reveal>
+          <h2 data-zh="往期记录" data-en="Archive">Archive</h2>
+          <span class="count" data-zh="共 6 篇" data-en="6 notes">6 notes</span>
+        </div>
+
+        <div class="topics" id="topics" role="tablist" data-od-id="topics" data-reveal>
+          <button class="topic is-active" data-topic="all" data-zh="全部" data-en="All">All</button>
+          <button class="topic" data-topic="systems" data-zh="系统" data-en="Systems">Systems</button>
+          <button class="topic" data-topic="frontend" data-zh="前端" data-en="Frontend">Frontend</button>
+          <button class="topic" data-topic="performance" data-zh="性能" data-en="Performance">Performance</button>
+          <button class="topic" data-topic="craft" data-zh="匠心" data-en="Craft">Craft</button>
+          <button class="topic" data-topic="tooling" data-zh="工具" data-en="Tooling">Tooling</button>
+        </div>
+
+        <div class="archive" id="archiveGrid" data-reveal>
+          <article class="card" id="post-02" data-article data-category="performance"
+                   data-title-en="A field guide to cold starts" data-title-zh="冷启动问题实战手册"
+                   data-meta="2026-07-22 · 8 min · Performance">
+            <div class="card__top">
+              <span class="card__meta"><time>2026-07-22</time> · <span data-zh="8 分钟阅读" data-en="8 min read">8 min read</span> · <span class="cat" data-zh="性能" data-en="Performance">Performance</span></span>
+              <span class="card__idx">02</span>
+            </div>
+            <h3 data-zh="冷启动问题实战手册" data-en="A field guide to cold starts">A field guide to cold starts</h3>
+            <p class="card__excerpt" data-zh="为什么第一个请求总是慢，以及如何在不自欺欺人的前提下度量并压缩它。"
+               data-en="Why the first request is always slow, and how to measure and compress it without lying to yourself.">Why the first request is always slow, and how to measure and compress it without lying to yourself.</p>
+            <div class="card__tags"><span class="tag">lambda</span><span class="tag">p99</span><span class="tag">trace</span></div>
+          </article>
+
+          <article class="card" id="post-03" data-article data-category="craft"
+                   data-title-en="On writing for engineers" data-title-zh="写给工程师的写作指南"
+                   data-meta="2026-07-09 · 6 min · Craft">
+            <div class="card__top">
+              <span class="card__meta"><time>2026-07-09</time> · <span data-zh="6 分钟阅读" data-en="6 min read">6 min read</span> · <span class="cat" data-zh="匠心" data-en="Craft">Craft</span></span>
+              <span class="card__idx">03</span>
+            </div>
+            <h3 data-zh="写给工程师的写作指南" data-en="On writing for engineers">On writing for engineers</h3>
+            <p class="card__excerpt" data-zh="设计文档、提交信息、事故回顾——好写作是放大影响力的杠杆，而非可有可无的修辞。"
+               data-en="Design docs, commit messages, postmortems — good writing is a leverage multiplier, not optional polish.">Design docs, commit messages, postmortems — good writing is a leverage multiplier, not optional polish.</p>
+            <div class="card__tags"><span class="tag">writing</span><span class="tag">rfc</span><span class="tag">comm</span></div>
+          </article>
+
+          <article class="card" id="post-04" data-article data-category="tooling"
+                   data-title-en="The economics of small tools" data-title-zh="小工具的经济学"
+                   data-meta="2026-06-28 · 5 min · Tooling">
+            <div class="card__top">
+              <span class="card__meta"><time>2026-06-28</time> · <span data-zh="5 分钟阅读" data-en="5 min read">5 min read</span> · <span class="cat" data-zh="工具" data-en="Tooling">Tooling</span></span>
+              <span class="card__idx">04</span>
+            </div>
+            <h3 data-zh="小工具的经济学" data-en="The economics of small tools">The economics of small tools</h3>
+            <p class="card__excerpt" data-zh="一个 20 行的脚本值多少钱？一次诚实的成本核算，关于什么时候该造、什么时候该买。"
+               data-en="What's a 20-line script worth? An honest accounting of when to build, and when to buy.">What's a 20-line script worth? An honest accounting of when to build, and when to buy.</p>
+            <div class="card__tags"><span class="tag">cli</span><span class="tag">make-vs-buy</span></div>
+          </article>
+
+          <article class="card" id="post-05" data-article data-category="systems"
+                   data-title-en="Reading week: distributed consensus" data-title-zh="阅读周：分布式一致性"
+                   data-meta="2026-06-15 · 14 min · Systems">
+            <div class="card__top">
+              <span class="card__meta"><time>2026-06-15</time> · <span data-zh="14 分钟阅读" data-en="14 min read">14 min read</span> · <span class="cat" data-zh="系统" data-en="Systems">Systems</span></span>
+              <span class="card__idx">05</span>
+            </div>
+            <h3 data-zh="阅读周：分布式一致性" data-en="Reading week: distributed consensus">Reading week: distributed consensus</h3>
+            <p class="card__excerpt" data-zh="从 Paxos 到 Raft，把一致性从论文黑话还原成你能在评审中讲清楚的东西。"
+               data-en="From Paxos to Raft — un-jargoning consensus until you can defend it in a review.">From Paxos to Raft — un-jargoning consensus until you can defend it in a review.</p>
+            <div class="card__tags"><span class="tag">raft</span><span class="tag">quorum</span><span class="tag">reading</span></div>
+          </article>
+
+          <article class="card" id="post-06" data-article data-category="craft"
+                   data-title-en="Shipping the unglamorous parts" data-title-zh="交付那些不起眼的部分"
+                   data-meta="2026-05-30 · 7 min · Craft">
+            <div class="card__top">
+              <span class="card__meta"><time>2026-05-30</time> · <span data-zh="7 分钟阅读" data-en="7 min read">7 min read</span> · <span class="cat" data-zh="匠心" data-en="Craft">Craft</span></span>
+              <span class="card__idx">06</span>
+            </div>
+            <h3 data-zh="交付那些不起眼的部分" data-en="Shipping the unglamorous parts">Shipping the unglamorous parts</h3>
+            <p class="card__excerpt" data-zh="空状态、错误边界、加载骨架——真正定义产品质感的，往往是没人发推的那 80%。"
+               data-en="Empty states, error edges, loading skeletons — the un-tweeted 80% that defines how a product actually feels.">Empty states, error edges, loading skeletons — the un-tweeted 80% that defines how a product actually feels.</p>
+            <div class="card__tags"><span class="tag">ux</span><span class="tag">detail</span><span class="tag">qa</span></div>
+          </article>
+
+          <article class="card" id="post-07" data-article data-category="frontend"
+                   data-title-en="Typography for dense dashboards" data-title-zh="高密度仪表盘的排版术"
+                   data-meta="2026-05-12 · 9 min · Frontend">
+            <div class="card__top">
+              <span class="card__meta"><time>2026-05-12</time> · <span data-zh="9 分钟阅读" data-en="9 min read">9 min read</span> · <span class="cat" data-zh="前端" data-en="Frontend">Frontend</span></span>
+              <span class="card__idx">07</span>
+            </div>
+            <h3 data-zh="高密度仪表盘的排版术" data-en="Typography for dense dashboards">Typography for dense dashboards</h3>
+            <p class="card__excerpt" data-zh="当屏幕塞满数字时，字距、字重与等宽列就是你的信息架构。"
+               data-en="When the screen is wall-to-wall numbers, tracking, weight and tabular columns are your information architecture.">When the screen is wall-to-wall numbers, tracking, weight and tabular columns are your information architecture.</p>
+            <div class="card__tags"><span class="tag">type</span><span class="tag">tnum</span><span class="tag">grid</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Dino game / 摸鱼 ─── -->
+    <section class="section" id="play" data-od-id="dino-game">
+      <div class="container">
+        <div class="sec-head" data-reveal>
+          <h2 data-zh="摸鱼一下" data-en="Take a break">Take a break</h2>
+          <span class="count game__best"><span data-zh="最高分" data-en="Best">Best</span> <b id="dinoBestLabel">0</b></span>
+        </div>
+        <div class="game" data-reveal>
+          <div class="game__head">
+            <div>
+              <span class="eyebrow" data-zh="小游戏" data-en="Mini game">Mini game</span>
+              <h2 style="margin-top:12px" data-zh="小恐龙跑酷" data-en="Dino Run">Dino Run</h2>
+            </div>
+            <p class="mono" style="max-width:34ch" data-zh="读累了？让小恐龙替你跑一会儿。"
+               data-en="Tired of reading? Let the dino run a while.">Tired of reading? Let the dino run a while.</p>
+          </div>
+
+          <div class="game__stage">
+            <canvas id="dinoCanvas" width="1800" height="440" role="img" aria-label="Dino run game"></canvas>
+            <div class="game__overlay" id="dinoOverlay">
+              <div class="game__state" data-state="ready">
+                <div class="game__state-title" data-zh="按空格开始" data-en="Press space to run">Press space to run</div>
+                <div class="game__state-sub" data-zh="空格 / ↑ / 点击屏幕 跳跃" data-en="Space / ↑ / tap to jump">Space / ↑ / tap to jump</div>
+              </div>
+              <div class="game__state" data-state="over" hidden>
+                <div class="game__state-title" data-zh="Game Over" data-en="Game Over">Game Over</div>
+                <div class="game__state-sub"><span data-zh="得分" data-en="Score">Score</span> <b id="dinoScore">0</b> · <span data-zh="最佳" data-en="Best">Best</span> <b id="dinoBest">0</b></div>
+                <button class="btn btn--primary" id="dinoRestart" data-od-id="dino-restart">
+                  <span data-zh="再来一局" data-en="Run again">Run again</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="game__hint">
+            <span><kbd>Space</kbd> / <kbd>↑</kbd> <span data-zh="跳跃" data-en="jump">jump</span></span>
+            <span><kbd style="cursor:pointer">tap</kbd> <span data-zh="触屏跳跃" data-en="tap on mobile">tap on mobile</span></span>
+            <span data-zh="躲过仙人掌，越跑越快。" data-en="Dodge the cacti — it gets faster.">Dodge the cacti — it gets faster.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── About / 关于 ─── -->
+    <section class="section" id="about" data-od-id="about">
+      <div class="container">
+        <div class="sec-head" data-reveal>
+          <h2 data-zh="关于这本记录" data-en="About this notebook">About this notebook</h2>
+        </div>
+        <div class="about" data-reveal>
+          <div class="about__body">
+            <div class="eyebrow" style="margin-bottom:20px"><span data-zh="关于" data-en="About">About</span></div>
+            <p data-zh="我是 Your Name，一名工程师。这里是我随手记下的工程笔记、阅读摘抄与偶尔的想法。没有排期，也不追热点——想到什么写什么，权当给自己的备忘。"
+               data-en="I'm Your Name, an engineer. This is where I keep engineering notes, reading highlights, and the occasional thought. No schedule, no hot takes — just things I didn't want to forget.">
+              I'm Your Name, an engineer. This is where I keep engineering notes, reading highlights, and the occasional thought. No schedule, no hot takes — just things I didn't want to forget.
+            </p>
+            <p data-zh="如果某篇对你有用，那就算我没白写。"
+               data-en="If a note happens to be useful to you, it was worth writing down.">
+              If a note happens to be useful to you, it was worth writing down.
+            </p>
+            <div class="about__links">
+              <a class="btn" href="#" data-zh="GitHub" data-en="GitHub">GitHub</a>
+              <a class="btn" href="#" data-zh="RSS 源" data-en="RSS feed">RSS feed</a>
+              <a class="btn" href="#" data-zh="邮件" data-en="Email">Email</a>
+            </div>
+          </div>
+          <div class="about__card">
+            <div class="lab" data-zh="写作原则" data-en="How I write">How I write</div>
+            <p data-zh="先写给三个月后的自己看；再写给同样在折腾这件事的人看。能具体就具体，能短就短。"
+               data-en="Write for myself three months from now first; for someone else wrestling with the same thing second. Be specific, be brief.">
+              Write for myself three months from now first; for someone else wrestling with the same thing second. Be specific, be brief.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── Footer ─── -->
+  <footer class="footer" data-od-id="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span><span>devlog</span></a>
+          <p data-zh="一名工程师的个人记录。关于工程、阅读与日常思考。"
+             data-en="A personal log from an engineer. On engineering, reading, and everyday thinking.">
+            A personal log from an engineer. On engineering, reading, and everyday thinking.
+          </p>
+        </div>
+        <div>
+          <h4 data-zh="导航" data-en="Navigate">Navigate</h4>
+          <ul>
+            <li><a href="#latest" data-zh="最新" data-en="Latest">Latest</a></li>
+            <li><a href="#archive" data-zh="往期记录" data-en="Archive">Archive</a></li>
+            <li><a href="#play" data-zh="摸鱼一下" data-en="Play the dino">Play the dino</a></li>
+            <li><a href="#about" data-zh="关于" data-en="About">About</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-zh="其它" data-en="Elsewhere">Elsewhere</h4>
+          <ul>
+            <li><a href="#" data-zh="GitHub" data-en="GitHub">GitHub</a></li>
+            <li><a href="#" data-zh="RSS 源" data-en="RSS feed">RSS feed</a></li>
+            <li><a href="#" data-zh="邮件" data-en="Email">Email</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span data-zh="© 2026 你的名字。随手写于某处。" data-en="© 2026 Your Name. Scribbled somewhere.">© 2026 Your Name. Scribbled somewhere.</span>
+        <span class="mono" data-zh="部署于 GitHub Pages" data-en="Deployed on GitHub Pages">Deployed on GitHub Pages</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── 搜索面板 ─── -->
+  <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Search">
+    <div class="palette__backdrop" id="paletteBackdrop"></div>
+    <div class="palette__panel">
+      <div class="palette__input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+        <input type="text" id="paletteInput" autocomplete="off"
+               data-zh-placeholder="搜索文章…" data-en-placeholder="Search notes…" placeholder="Search notes…" />
+      </div>
+      <ul class="palette__list" id="paletteList"></ul>
+      <div class="palette__hint">
+        <span><kbd>↑</kbd><kbd>↓</kbd> <span data-zh="选择" data-en="navigate">navigate</span></span>
+        <span><kbd>↵</kbd> <span data-zh="打开" data-en="open">open</span></span>
+        <span><kbd>esc</kbd> <span data-zh="关闭" data-en="close">close</span></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ═══ 模块 1：语言 / 进度条 / nav / 渐显 / 专题筛选 / 搜索面板 ═══ */
+  (function () {
+    "use strict";
+    var root = document.documentElement;
+    var LANG_KEY = "devlog-lang";
+
+    var stored = null;
+    try { stored = localStorage.getItem(LANG_KEY); } catch (e) {}
+    var lang = stored || ((navigator.language || "en").toLowerCase().indexOf("zh") === 0 ? "zh" : "en");
+
+    function applyLang(scope) {
+      scope = scope || document;
+      var nodes = scope.querySelectorAll("[data-zh]");
+      for (var i = 0; i < nodes.length; i++) {
+        var v = nodes[i].getAttribute("data-" + lang);
+        if (v != null) nodes[i].textContent = v;
+      }
+      var ph = scope.querySelectorAll("[data-zh-placeholder]");
+      for (var j = 0; j < ph.length; j++) {
+        var p = ph[j].getAttribute(lang + "-placeholder");
+        if (p != null) ph[j].placeholder = p;
+      }
+      root.lang = lang === "zh" ? "zh-CN" : "en";
+    }
+    function setLang(l) { lang = l; try { localStorage.setItem(LANG_KEY, l); } catch (e) {} applyLang(); }
+    applyLang();
+    document.getElementById("langToggle").addEventListener("click", function () { setLang(lang === "zh" ? "en" : "zh"); });
+
+    /* 进度条 + nav */
+    var bar = document.getElementById("progressBar");
+    var nav = document.getElementById("nav");
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - doc.clientHeight;
+        bar.style.transform = "scaleX(" + (max > 0 ? doc.scrollTop / max : 0).toFixed(4) + ")";
+        nav.classList.toggle("scrolled", window.scrollY > 8);
+        ticking = false;
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+
+    /* 渐显 */
+    var revealEls = document.querySelectorAll("[data-reveal]");
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-visible"); io.unobserve(en.target); } });
+      }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else { revealEls.forEach(function (el) { el.classList.add("is-visible"); }); }
+
+    /* 专题筛选 */
+    var topicBtns = document.querySelectorAll(".topic");
+    var archiveCards = document.querySelectorAll("#archiveGrid [data-article]");
+    topicBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        topicBtns.forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+        var t = btn.getAttribute("data-topic");
+        archiveCards.forEach(function (c) { c.style.display = (t === "all" || c.getAttribute("data-category") === t) ? "" : "none"; });
+      });
+    });
+
+    /* 搜索面板 */
+    var palette = document.getElementById("palette");
+    var pInput = document.getElementById("paletteInput");
+    var pList = document.getElementById("paletteList");
+    var pTrigger = document.getElementById("searchTrigger");
+    var pBackdrop = document.getElementById("paletteBackdrop");
+    var items = Array.prototype.map.call(document.querySelectorAll("[data-article]"), function (card) {
+      return { id: card.id, en: card.getAttribute("data-title-en"), zh: card.getAttribute("data-title-zh"), meta: card.getAttribute("data-meta") || "" };
+    });
+    var activeIndex = -1;
+    function render(q) {
+      var ql = q.trim().toLowerCase();
+      var f = ql ? items.filter(function (it) { return (it.en + " " + it.zh + " " + it.meta).toLowerCase().indexOf(ql) !== -1; }) : items;
+      activeIndex = f.length ? 0 : -1;
+      if (!f.length) { pList.innerHTML = '<li class="empty">' + (lang === "zh" ? "没有匹配的记录。" : "No matching notes.") + "</li>"; return; }
+      pList.innerHTML = f.map(function (it, i) {
+        var title = lang === "zh" ? it.zh : it.en;
+        return '<li class="res' + (i === 0 ? " active" : "") + '"><button data-target="' + it.id + '"><span class="res-title">' + title + "</span><span class=\"res-meta\">" + it.meta + "</span></button></li>";
+      }).join("");
+    }
+    function setActive(i) {
+      var rows = pList.querySelectorAll(".res");
+      if (!rows.length) return;
+      rows.forEach(function (r) { r.classList.remove("active"); });
+      if (i < 0) i = rows.length - 1; if (i >= rows.length) i = 0;
+      activeIndex = i; rows[i].classList.add("active");
+      var rowRect = rows[i].getBoundingClientRect();
+      var cRect = pList.getBoundingClientRect();
+      if (rowRect.top < cRect.top) pList.scrollTop -= (cRect.top - rowRect.top);
+      else if (rowRect.bottom > cRect.bottom) pList.scrollTop += (rowRect.bottom - cRect.bottom);
+    }
+    function openPalette() { palette.classList.add("is-open"); pInput.value = ""; render(""); document.body.style.overflow = "hidden"; setTimeout(function () { pInput.focus(); }, 20); }
+    function closePalette() { palette.classList.remove("is-open"); document.body.style.overflow = ""; }
+    function goToCard(id) {
+      closePalette();
+      var card = document.getElementById(id);
+      if (!card) return;
+      var y = card.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      card.classList.add("flash"); setTimeout(function () { card.classList.remove("flash"); }, 1100);
+    }
+    pTrigger.addEventListener("click", openPalette);
+    pBackdrop.addEventListener("click", closePalette);
+    pInput.addEventListener("input", function () { render(pInput.value); });
+    pList.addEventListener("click", function (e) { var b = e.target.closest ? e.target.closest("button[data-target]") : null; if (b) goToCard(b.getAttribute("data-target")); });
+    pInput.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); setActive(activeIndex + 1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); setActive(activeIndex - 1); }
+      else if (e.key === "Enter") { e.preventDefault(); var rows = pList.querySelectorAll(".res"); if (rows[activeIndex]) { var btn = rows[activeIndex].querySelector("button"); if (btn) goToCard(btn.getAttribute("data-target")); } }
+      else if (e.key === "Escape") { e.preventDefault(); closePalette(); }
+    });
+    document.addEventListener("keydown", function (e) {
+      var isOpen = palette.classList.contains("is-open");
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); isOpen ? closePalette() : openPalette(); }
+      else if (e.key === "Escape" && isOpen) { closePalette(); }
+      else if (!isOpen && e.key === "/" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); openPalette(); }
+    });
+  })();
+
+  /* ═══ 模块 2：小恐龙跑酷 ═══ */
+  (function () {
+    "use strict";
+    var canvas = document.getElementById("dinoCanvas");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+
+    var W = 900, H = 220;
+    var DPR = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    ctx.scale(DPR, DPR);
+
+    /* 颜色读自 :root tokens（canvas 不能直接用 CSS 变量） */
+    var css = getComputedStyle(document.documentElement);
+    function tk(n) { var v = css.getPropertyValue(n); return v ? v.trim() : ""; }
+    var C = { fg: tk("--fg"), fg2: tk("--fg-2"), muted: tk("--muted"), accent: tk("--accent"), border: tk("--border"), warm: tk("--surface-warm") };
+
+    var GROUND_Y = H - 34;
+    var GRAVITY = 0.6, JUMP_V = -11.5;
+    var state = "ready"; /* ready | play | over */
+    var speed = 6, score = 0, frame = 0, spawnTimer = 0, nextSpawn = 80, legToggle = 0;
+    var hi = 0; try { hi = parseInt(localStorage.getItem("devlog-dino-hi") || "0", 10) || 0; } catch (e) {}
+    var dino = { x: 64, y: GROUND_Y - 46, w: 44, h: 46, vy: 0, onGround: true };
+    var obstacles = [], clouds = [], dashes = [];
+    for (var i = 0; i < 3; i++) clouds.push({ x: Math.random() * W, y: 28 + Math.random() * 60, s: 0.4 + Math.random() * 0.5 });
+    for (var gx = 0; gx < W + 40; gx += 26) dashes.push(gx);
+
+    var overlay = document.getElementById("dinoOverlay");
+    var elScore = document.getElementById("dinoScore");
+    var elBest = document.getElementById("dinoBest");
+    var elBestLabel = document.getElementById("dinoBestLabel");
+    elBestLabel.textContent = hi;
+
+    function reset() { speed = 6; score = 0; obstacles = []; spawnTimer = 0; nextSpawn = 80; dino.y = GROUND_Y - dino.h; dino.vy = 0; dino.onGround = true; }
+    function start() { reset(); state = "play"; syncOverlay(); }
+    function gameOver() {
+      state = "over";
+      if (score > hi) { hi = score; try { localStorage.setItem("devlog-dino-hi", String(hi)); } catch (e) {} }
+      elScore.textContent = score; elBest.textContent = hi; elBestLabel.textContent = hi; syncOverlay();
+    }
+    function syncOverlay() {
+      overlay.style.display = state === "play" ? "none" : "";
+      overlay.querySelector('[data-state="ready"]').hidden = state !== "ready";
+      overlay.querySelector('[data-state="over"]').hidden = state !== "over";
+    }
+    syncOverlay();
+
+    function jump() {
+      if (state === "ready") return start();
+      if (state === "over") return start();
+      if (state === "play" && dino.onGround) { dino.vy = JUMP_V; dino.onGround = false; }
+    }
+
+    function spawnObstacle() {
+      var big = Math.random() < 0.4;
+      obstacles.push({ x: W + 12, y: GROUND_Y - (big ? 42 + Math.random() * 8 : 28 + Math.random() * 8), w: big ? 26 + Math.random() * 8 : 16 + Math.random() * 6, h: big ? 42 + Math.random() * 8 : 28 + Math.random() * 8 });
+      if (Math.random() < 0.22) obstacles.push({ x: W + 12 + 30, y: GROUND_Y - 24, w: 16, h: 24 });
+    }
+    function hit(a, b) {
+      var ax = a.x + 6, ay = a.y + 5, aw = a.w - 12, ah = a.h - 7;
+      return ax < b.x + b.w && ax + aw > b.x && ay < b.y + b.h && ay + ah > b.y;
+    }
+
+    function update() {
+      frame++;
+      var cspd = (state === "play" ? 1 : 0.4);
+      for (var i = 0; i < clouds.length; i++) { clouds[i].x -= clouds[i].s * cspd * 1.4; if (clouds[i].x < -50) clouds[i].x = W + 50; }
+      var gspd = (state === "play" ? speed : speed * 0.4);
+      for (var j = 0; j < dashes.length; j++) { dashes[j] -= gspd; if (dashes[j] < -26) dashes[j] += W + 52; }
+      legToggle = Math.floor(frame / 6) % 2;
+      if (state !== "play") return;
+
+      if (frame % 6 === 0) score++;
+      speed = 6 + Math.min(7, score / 60);
+
+      dino.vy += GRAVITY;
+      dino.y += dino.vy;
+      if (dino.y >= GROUND_Y - dino.h) { dino.y = GROUND_Y - dino.h; dino.vy = 0; dino.onGround = true; }
+
+      spawnTimer++;
+      if (spawnTimer >= nextSpawn) { spawnObstacle(); spawnTimer = 0; nextSpawn = Math.round(52 + Math.random() * 72); }
+
+      for (var k = obstacles.length - 1; k >= 0; k--) {
+        obstacles[k].x -= speed;
+        if (obstacles[k].x + obstacles[k].w < -12) obstacles.splice(k, 1);
+        else if (hit(dino, obstacles[k])) { gameOver(); return; }
+      }
+    }
+
+    function rr(x, y, w, h, r) {
+      r = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath(); ctx.fill();
+    }
+    function drawDino(x, y) {
+      ctx.fillStyle = C.fg;
+      rr(x, y + 24, 13, 9, 3);          /* tail */
+      rr(x + 8, y + 16, 25, 21, 9);     /* body */
+      rr(x + 23, y + 3, 20, 19, 7);     /* head */
+      rr(x + 30, y + 25, 6, 4, 2);      /* arm */
+      var ly = y + 37;
+      if (dino.onGround) {
+        if (legToggle) { rr(x + 13, ly, 6, 9, 2); rr(x + 25, ly, 6, 5, 2); }
+        else { rr(x + 13, ly, 6, 5, 2); rr(x + 25, ly, 6, 9, 2); }
+      } else { rr(x + 15, ly, 6, 6, 2); rr(x + 24, ly, 6, 6, 2); }
+      ctx.fillStyle = C.warm;           /* eye */
+      ctx.fillRect(x + 35, y + 8, 3, 3);
+    }
+    function drawCactus(o) {
+      ctx.fillStyle = C.accent;
+      var mw = Math.max(5, Math.round(o.w * 0.34));
+      rr(o.x + (o.w - mw) / 2, o.y, mw, o.h, 3);
+      rr(o.x, o.y + o.h * 0.40, o.w * 0.5, Math.max(4, mw * 0.8), 2);
+      rr(o.x, o.y + o.h * 0.18, Math.max(4, mw * 0.8), o.h * 0.26, 2);
+      rr(o.x + o.w * 0.5, o.y + o.h * 0.52, o.w * 0.5, Math.max(4, mw * 0.8), 2);
+      rr(o.x + o.w - Math.max(4, mw * 0.8), o.y + o.h * 0.26, Math.max(4, mw * 0.8), o.h * 0.30, 2);
+    }
+    function drawCloud(c) {
+      ctx.fillStyle = C.border;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 7 * c.s + 4, 0, Math.PI * 2);
+      ctx.arc(c.x + 10 * c.s + 4, c.y - 4 * c.s, 9 * c.s + 4, 0, Math.PI * 2);
+      ctx.arc(c.x + 21 * c.s + 4, c.y, 7 * c.s + 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    function pad(n) { n = String(n); while (n.length < 5) n = "0" + n; return n; }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      for (var c = 0; c < clouds.length; c++) drawCloud(clouds[c]);
+      ctx.strokeStyle = C.border; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
+      ctx.fillStyle = C.border;
+      for (var d = 0; d < dashes.length; d++) ctx.fillRect(dashes[d], GROUND_Y + 6, 12, 2);
+      for (var o = 0; o < obstacles.length; o++) drawCactus(obstacles[o]);
+      drawDino(dino.x, dino.y);
+      ctx.textAlign = "right";
+      ctx.fillStyle = C.fg2; ctx.font = "600 15px " + "ui-monospace, Menlo, Consolas, monospace";
+      ctx.fillText(pad(score), W - 16, 28);
+      ctx.fillStyle = C.muted; ctx.font = "500 11px " + "ui-monospace, Menlo, Consolas, monospace";
+      ctx.fillText("BEST " + pad(hi), W - 16, 46);
+      ctx.textAlign = "left";
+    }
+
+    /* 固定步长循环（不受刷新率影响） */
+    var last = 0, acc = 0, STEP = 1000 / 60;
+    function loop(now) {
+      if (!last) last = now;
+      var dt = now - last; last = now;
+      if (dt > 120) dt = 120;
+      acc += dt;
+      var guard = 0;
+      while (acc >= STEP && guard < 5) { update(); acc -= STEP; guard++; }
+      draw();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    /* 控制 */
+    var gameVisible = false;
+    if ("IntersectionObserver" in window) {
+      var gIO = new IntersectionObserver(function (es) { es.forEach(function (en) { gameVisible = en.isIntersecting; }); }, { threshold: 0.2 });
+      gIO.observe(document.getElementById("dino-game"));
+    } else { gameVisible = true; }
+
+    document.addEventListener("keydown", function (e) {
+      if (document.getElementById("palette").classList.contains("is-open")) return;
+      if (!gameVisible) return;
+      if (e.code === "Space" || e.code === "ArrowUp") { e.preventDefault(); jump(); }
+    });
+    overlay.addEventListener("click", function (e) { if (e.target.closest("#dinoRestart")) return; jump(); });
+    document.getElementById("dinoRestart").addEventListener("click", function (e) { e.stopPropagation(); start(); });
+    canvas.addEventListener("mousedown", function () { if (state === "play") jump(); });
+    canvas.addEventListener("touchstart", function (e) { e.preventDefault(); jump(); }, { passive: false });
+  })();
+  </script>
+</body>
+</html>
