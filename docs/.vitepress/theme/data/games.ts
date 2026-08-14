@@ -16,4 +16,29 @@ export const games: Game[] = [
     featured: true,
     component: () => import('../components/games/DinoRun.vue'),
   },
+  {
+    id: 'snake',
+    title: { zh: '贪吃蛇', en: 'Snake' },
+    desc: { zh: '吃得越多跑得越快，别咬到自己。', en: 'Each bite makes you faster. Don\'t bite yourself.' },
+    component: () => import('../components/games/Snake.vue'),
+  },
+  {
+    id: '2048',
+    title: { zh: '2048', en: '2048' },
+    desc: { zh: '同数相撞即合并，凑出 2048。', en: 'Slide and merge same numbers to reach 2048.' },
+    featured: true,
+    component: () => import('../components/games/G2048.vue'),
+  },
+  {
+    id: 'asteroids',
+    title: { zh: '小行星', en: 'Asteroids' },
+    desc: { zh: '开着线框飞船，把大石头打成小石头。', en: 'Pilot a wireframe ship and shatter rocks into pieces.' },
+    component: () => import('../components/games/Asteroids.vue'),
+  },
+  {
+    id: 'frogger',
+    title: { zh: '过马路', en: 'Cross the Road' },
+    desc: { zh: '一格一格跳过车流，到对岸就升级。', en: 'Hop across traffic lane by lane. Level up at the far side.' },
+    component: () => import('../components/games/Frogger.vue'),
+  },
 ]

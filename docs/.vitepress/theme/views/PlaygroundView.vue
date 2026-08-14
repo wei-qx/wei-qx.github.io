@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent } from 'vue'
+import { ref, computed, defineAsyncComponent, onMounted, onUnmounted } from 'vue'
 import { games } from '../data/games'
 import { lang } from '../composables/useLang'
 import T from '../components/T.vue'
@@ -10,6 +10,45 @@ const current = computed(() => games.find((g) => g.id === selected.value) ?? nul
 const asyncComponents = Object.fromEntries(
   games.map((g) => [g.id, defineAsyncComponent(g.component)]),
 )
+
+// —— 全屏：对整个游戏容器（标题 + 画布 + 提示）启用，三个游戏通用 ——
+const gameBox = ref<HTMLElement | null>(null)
+const isFs = ref(false)
+// iPhone Safari 不支持元素全屏，能力检测失败时隐藏按钮
+const canFs =
+  typeof document !== 'undefined' &&
+  !!(document.documentElement.requestFullscreen || (document.documentElement as any).webkitRequestFullscreen)
+
+function syncFsState() {
+  isFs.value = !!(document.fullscreenElement || (document as any).webkitFullscreenElement)
+}
+
+async function toggleFs() {
+  const el = gameBox.value
+  if (!el) return
+  const doc = document as any
+  try {
+    if (isFs.value) {
+      await (document.exitFullscreen?.() ?? doc.webkitExitFullscreen?.())
+    } else {
+      await (el.requestFullscreen?.() ?? (el as any).webkitRequestFullscreen?.())
+    }
+  } catch (err) {
+    // 全屏失败不能静默吞掉（如浏览器策略拦截），至少暴露到控制台
+    console.error('[fullscreen] request failed:', err)
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', syncFsState)
+  document.addEventListener('webkitfullscreenchange', syncFsState)
+})
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', syncFsState)
+  document.removeEventListener('webkitfullscreenchange', syncFsState)
+  // 视图卸载时若仍处于全屏，交还浏览器（元素移除后多数浏览器会自动退出，此处兜底）
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
+})
 </script>
 
 <template>
@@ -42,7 +81,7 @@ const asyncComponents = Object.fromEntries(
       </template>
 
       <template v-else>
-        <div class="game" v-reveal>
+        <div ref="gameBox" class="game" v-reveal>
           <div class="game__head">
             <div>
               <span class="eyebrow"><T zh="小游戏" en="Mini game" /></span>
@@ -50,7 +89,13 @@ const asyncComponents = Object.fromEntries(
                 {{ lang === 'zh' ? current.title.zh : current.title.en }}
               </h2>
             </div>
-            <button class="btn" @click="selected = null"><T zh="返回列表" en="Back to list" /></button>
+            <div class="game__actions">
+              <button v-if="canFs" class="btn" @click="toggleFs">
+                <T v-if="isFs" zh="退出全屏" en="Exit fullscreen" />
+                <T v-else zh="全屏" en="Fullscreen" />
+              </button>
+              <button class="btn" @click="selected = null"><T zh="返回列表" en="Back to list" /></button>
+            </div>
           </div>
           <component :is="asyncComponents[current.id]" />
         </div>
